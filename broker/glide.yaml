@@ -1,0 +1,6 @@
+package: broker
+import:
+- package: code.cloudfoundry.org/lager
+- package: github.com/kelseyhightower/envconfig
+  version: ^1.1.0
+- package: github.com/pivotal-cf/brokerapi

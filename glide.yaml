@@ -1,0 +1,27 @@
+package: uaa-guard
+import:
+- package: github.com/gorilla/context
+  version: 215affda49addc4c8ef7e2534915df2c8c35c6cd
+- package: github.com/gorilla/handlers
+  version: a5775781a543af3c6b9f5baf10995e4d14168950
+- package: github.com/gorilla/mux
+  version: 8096f47503459bcc74d1f4c487b7e6e42e5746b5
+- package: github.com/gorilla/securecookie
+  version: ba5126409e0340d53e989ad07501a14949889a0d
+- package: github.com/gorilla/sessions
+  version: f61c3ec2cf65d69e7efedfd4d060fe128882c951
+- package: github.com/kelseyhightower/envconfig
+  version: 12c18e8343f6eb5fc3a9d5c8dc353e42e6bb40b9
+- package: github.com/markbates/goth
+  version: e8903baf9735b6eadeaa2425bcab290fc9967be4
+  subpackages:
+  - gothic
+  - providers/cloudfoundry
+- package: golang.org/x/net
+  version: 9313baa13d9262e49d07b20ed57dceafcd7240cc
+  subpackages:
+  - context
+- package: golang.org/x/oauth2
+  version: 3c3a985cb79f52a3190fbc056984415ca6763d01
+- package: code.cloudfoundry.org/lager
+- package: github.com/pivotal-cf/brokerapi
