@@ -4,17 +4,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
-	"github.com/markbates/goth/providers/cloudfoundry"
 )
 
 const (
@@ -44,14 +42,18 @@ func main() {
 
 	rtr := mux.NewRouter()
 
-	rtr.HandleFunc("/{rest:.*}", fakeRouter)
+	rtr.HandleFunc("/auth/{provider}/callback", callbackHandler)
+	rtr.HandleFunc("/auth/{provider}", gothic.BeginAuthHandler)
+	rtr.HandleFunc("/{rest:.*}", rootHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"
 	}
 
-	loggedRouter := handlers.LoggingHandler(os.Stdout, rtr)
+	proxyRouter := UrlChanger(rtr)
+
+	loggedRouter := handlers.LoggingHandler(os.Stdout, proxyRouter)
 
 	err := http.ListenAndServe(":"+port, loggedRouter)
 	if err != nil {
@@ -59,26 +61,21 @@ func main() {
 	}
 }
 
-func newProxy(remote_user string) http.Handler {
-	proxy := &httputil.ReverseProxy{
-		Director: func(req *http.Request) {
-			forwardedURL := req.Header.Get(CF_FORWARDED_URL)
-			url, err := url.Parse(forwardedURL)
-			if err != nil {
-				log.Fatalln(err.Error())
-			}
+// Set url based on the CF_FORWARDED_URL Header
+func UrlChanger(h http.Handler) http.Handler {
+	fn := func(res http.ResponseWriter, req *http.Request) {
+		forwardedURL := req.Header.Get(CF_FORWARDED_URL)
+		if forwardedURL != "" {
+			url, _ := url.Parse(forwardedURL)
 			req.URL = url
-			req.Host = url.Host
-			req.Header.Add("X-Auth-User", remote_user)
 
-			fmt.Println(req.Header)
-		},
+			// Add provider for goth, need to find a better way
+			if strings.HasPrefix(url.Path, "/auth") {
+				req.URL.RawQuery = "provider=cloudfoundry&" + req.URL.RawQuery
+			}
+		}
+		h.ServeHTTP(res, req)
 	}
-	return proxy
-}
 
-func setProviders(callbackURL string) {
-	goth.UseProviders(
-		cloudfoundry.New(c.UAAUrl, c.ClientKey, c.ClientSecret, callbackURL, "openid"),
-	)
+	return http.HandlerFunc(fn)
 }

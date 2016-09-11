@@ -2,10 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 
+	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
+	"github.com/markbates/goth/providers/cloudfoundry"
 )
 
 // Check if the user is logged in, otherwise forward to login page.
@@ -36,29 +40,26 @@ func callbackHandler(res http.ResponseWriter, req *http.Request) {
 	http.Redirect(res, req, "/", http.StatusTemporaryRedirect)
 }
 
-// This is a bit of nastiness: because of how route services work
-// you have to read the url that is calling the service from a
-// request header.
-// This can probably be switched to change the request before hitting mux.
-func fakeRouter(res http.ResponseWriter, req *http.Request) {
-	forwardedURL := req.Header.Get(CF_FORWARDED_URL)
-	if forwardedURL != "" {
-		url, _ := url.Parse(forwardedURL)
+func newProxy(remote_user string) http.Handler {
+	proxy := &httputil.ReverseProxy{
+		Director: func(req *http.Request) {
+			forwardedURL := req.Header.Get(CF_FORWARDED_URL)
+			url, err := url.Parse(forwardedURL)
+			if err != nil {
+				log.Fatalln(err.Error())
+			}
+			req.URL = url
+			req.Host = url.Host
+			req.Header.Add("X-Auth-User", remote_user)
 
-		switch url.Path {
-		case "/auth/cloudfoundry/callback":
-			req.URL.RawQuery = "provider=cloudfoundry&" + url.RawQuery + req.URL.RawQuery
-			callbackHandler(res, req)
-		case "/auth/cloudfoundry":
-			req.URL.RawQuery = "provider=cloudfoundry&" + url.RawQuery + req.URL.RawQuery
-
-			setProviders("https://" + url.Host + "/auth/cloudfoundry/callback")
-
-			gothic.BeginAuthHandler(res, req)
-		default:
-			rootHandler(res, req)
-		}
-	} else {
-		rootHandler(res, req)
+			fmt.Println(req.Header)
+		},
 	}
+	return proxy
+}
+
+func setProviders(callbackURL string) {
+	goth.UseProviders(
+		cloudfoundry.New(c.UAAUrl, c.ClientKey, c.ClientSecret, callbackURL, "openid"),
+	)
 }
