@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"strings"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -35,6 +34,9 @@ func init() {
 		log.Fatal(err.Error())
 	}
 	gothic.Store = sessions.NewCookieStore([]byte(c.CookieSecret))
+	gothic.GetProviderName = func(*http.Request) (string, error) {
+		return "cloudfoundry", nil
+	}
 }
 
 func main() {
@@ -42,8 +44,8 @@ func main() {
 
 	rtr := mux.NewRouter()
 
-	rtr.HandleFunc("/auth/{provider}/callback", callbackHandler)
-	rtr.HandleFunc("/auth/{provider}", gothic.BeginAuthHandler)
+	rtr.HandleFunc("/auth/callback", callbackHandler)
+	rtr.HandleFunc("/auth", gothic.BeginAuthHandler)
 	rtr.HandleFunc("/{rest:.*}", rootHandler)
 
 	port := os.Getenv("PORT")
@@ -51,7 +53,7 @@ func main() {
 		port = "3000"
 	}
 
-	proxyRouter := UrlChanger(rtr)
+	proxyRouter := ProxyForwardedURL(rtr)
 
 	loggedRouter := handlers.LoggingHandler(os.Stdout, proxyRouter)
 
@@ -62,17 +64,12 @@ func main() {
 }
 
 // Set url based on the CF_FORWARDED_URL Header
-func UrlChanger(h http.Handler) http.Handler {
+func ProxyForwardedURL(h http.Handler) http.Handler {
 	fn := func(res http.ResponseWriter, req *http.Request) {
 		forwardedURL := req.Header.Get(CF_FORWARDED_URL)
 		if forwardedURL != "" {
 			url, _ := url.Parse(forwardedURL)
 			req.URL = url
-
-			// Add provider for goth, need to find a better way
-			if strings.HasPrefix(url.Path, "/auth") {
-				req.URL.RawQuery = "provider=cloudfoundry&" + req.URL.RawQuery
-			}
 		}
 		h.ServeHTTP(res, req)
 	}
