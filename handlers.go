@@ -16,7 +16,7 @@ import (
 func rootHandler(res http.ResponseWriter, req *http.Request) {
 	s, _ := gothic.Store.Get(req, "uaa-proxy-session")
 	if s.Values["logged"] != true {
-		http.Redirect(res, req, "/auth/cloudfoundry", http.StatusTemporaryRedirect)
+		http.Redirect(res, req, "/auth", http.StatusTemporaryRedirect)
 		return
 	}
 
