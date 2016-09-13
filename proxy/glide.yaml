@@ -25,3 +25,5 @@ import:
   version: 3c3a985cb79f52a3190fbc056984415ca6763d01
 - package: code.cloudfoundry.org/lager
 - package: github.com/pivotal-cf/brokerapi
+- package: github.com/stretchr/testify
+  version: ~1.1.3

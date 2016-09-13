@@ -8,8 +8,8 @@ applications:
       GUARD_BROKER_USERNAME: broker
       GUARD_BROKER_PASSWORD: broker
       GUARD_ROUTE_SERVICE_URL: https://guard.my-paas.com
-  - name: uaa-guard
-    command: uaa-guard
+  - name: uaa-guard-proxy
+    command: proxy
     memory: 128M
     env:
       GUARD_COOKIE_SECRET: very-secret
