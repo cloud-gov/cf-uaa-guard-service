@@ -45,7 +45,7 @@ func main() {
 	rtr := mux.NewRouter()
 
 	rtr.HandleFunc("/auth/callback", callbackHandler)
-	rtr.HandleFunc("/auth", gothic.BeginAuthHandler)
+	rtr.HandleFunc("/auth", authHandler)
 	rtr.HandleFunc("/{rest:.*}", rootHandler)
 
 	port := os.Getenv("PORT")

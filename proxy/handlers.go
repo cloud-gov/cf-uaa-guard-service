@@ -23,6 +23,18 @@ func rootHandler(res http.ResponseWriter, req *http.Request) {
 	newProxy(s.Values["user_email"].(string)).ServeHTTP(res, req)
 }
 
+// Handle auth redirect
+// TO FIX: setProviders is called to change the callback url on each request
+func authHandler(res http.ResponseWriter, req *http.Request) {
+	forwardedURL := req.Header.Get(CF_FORWARDED_URL)
+	if forwardedURL != "" {
+		url, _ := url.Parse(forwardedURL)
+		req.URL.RawQuery = url.RawQuery
+		setProviders("https://" + url.Host + "/auth/callback")
+	}
+	gothic.BeginAuthHandler(res, req)
+}
+
 // Handle callbacks from oauth.
 func callbackHandler(res http.ResponseWriter, req *http.Request) {
 
