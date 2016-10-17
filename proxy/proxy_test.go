@@ -34,6 +34,8 @@ func TestProxy(t *testing.T) {
 		sess.Values["user_email"] = "fred@queen.com"
 		sess.Values["logged"] = true
 
+		// Set some invalid value so we can be sure that it's
+		// being overwritten internally.
 		req.Header.Set("X-Auth-User", "auth-user-from-client")
 
 		res := httptest.NewRecorder()
