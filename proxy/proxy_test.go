@@ -46,7 +46,7 @@ func TestProxy(t *testing.T) {
 		// Be sure there's only one X-Auth-User header and
 		// it's what we expect
 		assert.Equal(t, len(req.Header["X-Auth-User"]), 1)
-		assert.Equal(t, req.Header["X-Auth-User"][0], "fred@queen.com")
+		assert.Equal(t, req.Header.Get("X-Auth-User"), "fred@queen.com")
 
 		body, err := ioutil.ReadAll(res.Body)
 		assert.Nil(t, err)
