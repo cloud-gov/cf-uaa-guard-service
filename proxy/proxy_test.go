@@ -34,10 +34,17 @@ func TestProxy(t *testing.T) {
 		sess.Values["user_email"] = "fred@queen.com"
 		sess.Values["logged"] = true
 
+		req.Header.Set("X-Auth-User", "auth-user-from-client")
+
 		res := httptest.NewRecorder()
 		handler.ServeHTTP(res, req)
 
 		assert.Equal(t, res.Code, http.StatusOK)
+
+		// Be sure there's only one X-Auth-User header and
+		// it's what we expect
+		assert.Equal(t, len(req.Header["X-Auth-User"]), 1)
+		assert.Equal(t, req.Header["X-Auth-User"][0], "fred@queen.com")
 
 		body, err := ioutil.ReadAll(res.Body)
 		assert.Nil(t, err)
