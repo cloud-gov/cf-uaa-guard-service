@@ -62,7 +62,7 @@ func newProxy(remote_user string) http.Handler {
 			}
 			req.URL = url
 			req.Host = url.Host
-			req.Header.Set("X-Auth-User", remote_user)
+			req.Header.Add("X-Auth-User", remote_user)
 
 			fmt.Println(req.Header)
 		},
