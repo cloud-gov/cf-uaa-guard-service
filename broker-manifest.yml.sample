@@ -1,0 +1,10 @@
+---
+applications:
+  - name: uaa-guard-broker
+    command: broker
+    path: broker
+    memory: 128M
+    env:
+      GUARD_BROKER_USERNAME: broker
+      GUARD_BROKER_PASSWORD: broker
+      GUARD_ROUTE_SERVICE_URL: https://guard.my-paas.com
