@@ -3,9 +3,9 @@ applications:
   - name: uaa-guard-proxy
     command: proxy
     memory: 128M
-    env:
-      GUARD_COOKIE_SECRET: very-secret
-      GUARD_DEFAULT_CALLBACK_URL: https://uaa-guard-proxy.my-paas.com/auth/cloudfoundry/callback
-      GUARD_LOGIN_URL: https://login.my-paas.com
-      GUARD_CLIENT_KEY: uaaguard
-      GUARD_CLIENT_SECRET: uaaguard
+    # env:
+    #   GUARD_COOKIE_SECRET: very-secret
+    #   GUARD_DEFAULT_CALLBACK_URL: https://uaa-guard-proxy.my-paas.com/auth/cloudfoundry/callback
+    #   GUARD_LOGIN_URL: https://login.my-paas.com
+    #   GUARD_CLIENT_KEY: uaaguard
+    #   GUARD_CLIENT_SECRET: uaaguard
