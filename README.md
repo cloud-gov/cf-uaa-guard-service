@@ -25,11 +25,23 @@ Then deploy both apps by doing `cf push`.
 
 Once the broker is deployed, you can register it:
 
-```
-cf create-service-broker uaa-auth-broker broker broker https://uaa-guard-broker.my-paas.com --space-scoped
+```sh
+cf create-service-broker \
+    uaa-auth-broker \
+    $GUARD_BROKER_USERNAME \
+    $GUARD_BROKER_PASSWORD \
+    https://uaa-guard-broker.my-paas.com \
+    --space-scoped
 ```
 
-You should now be able to see the service in the marketplace if you run `$cf m`
+Once you've created the service broker, you must `enable-service-access` in
+order to see it in the `marketplace`.
+
+```sh
+cf enable-service-access uaa-auth
+```
+
+You should now be able to see the service in the marketplace if you run `cf marketplace`
 
 ### Protecting an application with UAA authentication
 
@@ -57,7 +69,7 @@ You can validate the route for `hello` is now bound to the `authy` service insta
 Getting routes for org org / space space as admin ...
 
 space          host                domain            port   path   type   apps                service
-space   hello               my-paas.com                        hello               authy
+space          hello               my-paas.com                            hello               authy
 ```
 
 All of that looks good, so the last step is to validate we can no longer view the `hello` application without providing credentials!
@@ -68,7 +80,6 @@ Unauthorized
 ```
 
 and if you visit it you will be redirected to UAA.
-
 
 ### Knowing who is logged in
 
