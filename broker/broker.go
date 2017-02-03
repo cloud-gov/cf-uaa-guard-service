@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
 
@@ -15,7 +16,7 @@ type GuardBroker struct {
 	BrokerPassword  string `envconfig:"broker_password"`
 }
 
-func (guardBroker *GuardBroker) Services() []brokerapi.Service {
+func (guardBroker *GuardBroker) Services(context.Context) []brokerapi.Service {
 	return []brokerapi.Service{
 		brokerapi.Service{
 			ID:            "7a3691df-4bba-4468-9cca-85f281143d3f",
@@ -36,30 +37,30 @@ func (guardBroker *GuardBroker) Services() []brokerapi.Service {
 	}
 }
 
-func (guardBroker *GuardBroker) Provision(instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) (brokerapi.ProvisionedServiceSpec, error) {
+func (guardBroker *GuardBroker) Provision(context context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) (brokerapi.ProvisionedServiceSpec, error) {
 	return brokerapi.ProvisionedServiceSpec{}, nil
 }
 
-func (guardBroker *GuardBroker) Deprovision(instanceID string, details brokerapi.DeprovisionDetails, asyncAllowed bool) (brokerapi.DeprovisionServiceSpec, error) {
+func (guardBroker *GuardBroker) Deprovision(context context.Context, instanceID string, details brokerapi.DeprovisionDetails, asyncAllowed bool) (brokerapi.DeprovisionServiceSpec, error) {
 	return brokerapi.DeprovisionServiceSpec{}, nil
 }
 
-func (guardBroker *GuardBroker) Bind(instanceID string, bindingID string, details brokerapi.BindDetails) (brokerapi.Binding, error) {
+func (guardBroker *GuardBroker) Bind(context context.Context, instanceID string, bindingID string, details brokerapi.BindDetails) (brokerapi.Binding, error) {
 	return brokerapi.Binding{
 			Credentials:     "",
 			RouteServiceURL: guardBroker.RouteServiceURL},
 		nil
 }
 
-func (guardBroker *GuardBroker) Unbind(instanceID string, bindingID string, details brokerapi.UnbindDetails) error {
+func (guardBroker *GuardBroker) Unbind(context context.Context, instanceID string, bindingID string, details brokerapi.UnbindDetails) error {
 	return nil
 }
 
-func (guardBroker *GuardBroker) LastOperation(instanceID, operationData string) (brokerapi.LastOperation, error) {
+func (guardBroker *GuardBroker) LastOperation(context context.Context, instanceID, operationData string) (brokerapi.LastOperation, error) {
 	return brokerapi.LastOperation{}, nil
 }
 
-func (guardBroker *GuardBroker) Update(instanceID string, details brokerapi.UpdateDetails, asyncAllowed bool) (brokerapi.UpdateServiceSpec, error) {
+func (guardBroker *GuardBroker) Update(context context.Context, instanceID string, details brokerapi.UpdateDetails, asyncAllowed bool) (brokerapi.UpdateServiceSpec, error) {
 	return brokerapi.UpdateServiceSpec{}, nil
 }
 

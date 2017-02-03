@@ -72,6 +72,6 @@ func newProxy(remote_user string) http.Handler {
 
 func setProviders(callbackURL string) {
 	goth.UseProviders(
-		cloudfoundry.New(c.UAAUrl, c.ClientKey, c.ClientSecret, callbackURL, "openid"),
+		cloudfoundry.New(c.LoginUrl, c.ClientKey, c.ClientSecret, callbackURL, "openid"),
 	)
 }
