@@ -1,4 +1,4 @@
-# UAA Auth Route Service
+# UAA Auth Route Service [![Build Status](https://travis-ci.org/cloudfoundry-community/cf-uaa-guard-service.svg?branch=master)](https://travis-ci.org/cloudfoundry-community/cf-uaa-guard-service)
 
 (Based on https://github.com/benlaplanche/cf-basic-auth-route-service)
 

@@ -1,0 +1,12 @@
+language: go
+
+go:
+- "1.7"
+- tip
+
+# Dependencies live in /vendor/
+install:
+- ./install.sh
+
+# Skip vendor tests
+script: go test -v $(go list ./... | grep -v /vendor/)
