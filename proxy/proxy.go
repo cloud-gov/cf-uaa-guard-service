@@ -21,7 +21,7 @@ const (
 type Config struct {
 	CookieSecret       string `envconfig:"cookie_secret"`
 	DefaultCallbackUrl string `envconfig:"default_callback_url"`
-	UAAUrl             string `envconfig:"uaa_url"`
+	LoginUrl           string `envconfig:"login_url"`
 	ClientKey          string `envconfig:"client_key"`
 	ClientSecret       string `envconfig:"client_secret"`
 }
