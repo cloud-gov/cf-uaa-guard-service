@@ -11,9 +11,10 @@ import (
 )
 
 type GuardBroker struct {
-	RouteServiceURL string `envconfig:"route_service_url"`
-	BrokerUsername  string `envconfig:"broker_username"`
-	BrokerPassword  string `envconfig:"broker_password"`
+	RouteServiceURL string `envconfig:"route_service_url" required:"true"`
+	BrokerUsername  string `envconfig:"broker_username" required:"true"`
+	BrokerPassword  string `envconfig:"broker_password" required:"true"`
+	Port            string `envconfig:"port" default:"3000"`
 }
 
 func (guardBroker *GuardBroker) Services(context.Context) []brokerapi.Service {
@@ -83,9 +84,5 @@ func main() {
 	brokerAPI := brokerapi.New(serviceBroker, logger, credentials)
 	http.Handle("/", brokerAPI)
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "3000"
-	}
-	http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(":"+serviceBroker.Port, nil)
 }
