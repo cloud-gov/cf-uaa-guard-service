@@ -19,16 +19,17 @@ const (
 )
 
 type Config struct {
-	CookieSecret       string `envconfig:"cookie_secret"`
-	DefaultCallbackUrl string `envconfig:"default_callback_url"`
-	LoginUrl           string `envconfig:"login_url"`
-	ClientKey          string `envconfig:"client_key"`
-	ClientSecret       string `envconfig:"client_secret"`
+	CookieSecret       string `envconfig:"cookie_secret" required:"true"`
+	DefaultCallbackURL string `envconfig:"default_callback_url" required:"true"`
+	LoginURL           string `envconfig:"login_url" required:"true"`
+	ClientKey          string `envconfig:"client_key" required:"true"`
+	ClientSecret       string `envconfig:"client_secret" required:"true"`
+	Port               string `envconfig:"port" default:"3000"`
 }
 
 var c Config
 
-func init() {
+func main() {
 	err := envconfig.Process("guard", &c)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -37,10 +38,8 @@ func init() {
 	gothic.GetProviderName = func(*http.Request) (string, error) {
 		return "cloudfoundry", nil
 	}
-}
 
-func main() {
-	setProviders(c.DefaultCallbackUrl)
+	setProviders(c.DefaultCallbackURL)
 
 	rtr := mux.NewRouter()
 
@@ -48,16 +47,11 @@ func main() {
 	rtr.HandleFunc("/auth", authHandler)
 	rtr.HandleFunc("/{rest:.*}", rootHandler)
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "3000"
-	}
-
 	proxyRouter := ProxyForwardedURL(rtr)
 
 	loggedRouter := handlers.LoggingHandler(os.Stdout, proxyRouter)
 
-	err := http.ListenAndServe(":"+port, loggedRouter)
+	err = http.ListenAndServe(":"+c.Port, loggedRouter)
 	if err != nil {
 		fmt.Println(err)
 	}
