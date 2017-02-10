@@ -1,2 +1,5 @@
+glide.lock
+/proxy/vendor
+/broker/vendor
 .env
 *manifest.yml

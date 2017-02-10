@@ -19,13 +19,11 @@ Before getting started you will need:
 - Access to a cloud foundry deployment
 - UAA client credentials
 
-Uncomment and fill in the environment variables required as the sample in `broker-manifest.yml.sample` and copy the manifest to `broker-manifest.yml`.
+First, run in command line `install.sh` to install dependencies.
 
-Run `cf push -f broker-manifest.yml` to deploy the `uaa-guard-proxy` app.
+Uncomment and fill in the environment variables required as the sample in `manifest.yml.sample` and copy the manifest to `manifest.yml`.
 
-Uncomment and fill in the environment variables required as the sample in `proxy-manifest.yml.sample` and copy the manifest to `proxy-manifest.yml`.
-
-Run `cf push -f proxy-manifest.yml` to deploy the `uaa-guard-proxy` app.
+Run `cf push` to deploy both apps.
 
 Once the broker is deployed, you can register it:
 

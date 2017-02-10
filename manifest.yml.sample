@@ -1,0 +1,20 @@
+---
+applications:
+  - name: uaa-guard-broker
+    buildpack: go_buildpack
+    path: broker
+    memory: 64M
+    #env:
+    #  GUARD_BROKER_USERNAME: broker
+    #  GUARD_BROKER_PASSWORD: broker
+    #  GUARD_ROUTE_SERVICE_URL: https://guard.my-paas.com
+  - name: uaa-guard-proxy
+    buildpack: go_buildpack
+    path: proxy
+    memory: 128M
+    #env:
+    #  GUARD_COOKIE_SECRET: very-secret
+    #  GUARD_LOGIN_URL: https://login.my-paas.com
+    #  GUARD_CLIENT_KEY: uaaguard
+    #  GUARD_CLIENT_SECRET: uaaguard
+    #  GUARD_INSECURE_SKIP_VERIFY: false # set to true to skip ssl verification

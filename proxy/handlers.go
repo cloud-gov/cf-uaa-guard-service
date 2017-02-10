@@ -28,9 +28,9 @@ func rootHandler(res http.ResponseWriter, req *http.Request) {
 func authHandler(res http.ResponseWriter, req *http.Request) {
 	forwardedURL := req.Header.Get(CF_FORWARDED_URL)
 	if forwardedURL != "" {
-		url, _ := url.Parse(forwardedURL)
-		req.URL.RawQuery = url.RawQuery
-		setProviders("https://" + url.Host + "/auth/callback")
+		parsedUrl, _ := url.Parse(forwardedURL)
+		req.URL.RawQuery = parsedUrl.RawQuery
+		setProviders("https://" + parsedUrl.Host + "/auth/callback")
 	}
 	gothic.BeginAuthHandler(res, req)
 }
@@ -56,12 +56,12 @@ func newProxy(remote_user string) http.Handler {
 	proxy := &httputil.ReverseProxy{
 		Director: func(req *http.Request) {
 			forwardedURL := req.Header.Get(CF_FORWARDED_URL)
-			url, err := url.Parse(forwardedURL)
+			parsedUrl, err := url.Parse(forwardedURL)
 			if err != nil {
 				log.Fatalln(err.Error())
 			}
-			req.URL = url
-			req.Host = url.Host
+			req.URL = parsedUrl
+			req.Host = parsedUrl.Host
 			req.Header.Set("X-Auth-User", remote_user)
 
 			fmt.Println(req.Header)
@@ -71,7 +71,9 @@ func newProxy(remote_user string) http.Handler {
 }
 
 func setProviders(callbackURL string) {
+	provider := cloudfoundry.New(c.LoginURL, c.ClientKey, c.ClientSecret, callbackURL, "openid")
+	provider.Client = DefaultHttpClient()
 	goth.UseProviders(
-		cloudfoundry.New(c.LoginURL, c.ClientKey, c.ClientSecret, callbackURL, "openid"),
+		provider,
 	)
 }
