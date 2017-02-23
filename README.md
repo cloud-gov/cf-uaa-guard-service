@@ -38,13 +38,6 @@ cf create-service-broker \
     --space-scoped
 ```
 
-Once you've created the service broker, you must `enable-service-access` in
-order to see it in the `marketplace`.
-
-```sh
-cf enable-service-access uaa-auth
-```
-
 You should now be able to see the service in the marketplace if you run `cf marketplace`
 
 ### Protecting an application with UAA authentication
