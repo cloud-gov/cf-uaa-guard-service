@@ -2,6 +2,7 @@
 applications:
   - name: uaa-guard-proxy
     command: proxy
+    path: proxy
     memory: 128M
     # env:
     #   GUARD_COOKIE_SECRET: very-secret

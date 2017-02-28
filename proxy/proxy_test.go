@@ -32,6 +32,7 @@ func TestProxy(t *testing.T) {
 		sess, err := gothic.Store.Get(req, "uaa-proxy-session")
 		assert.Nil(t, err)
 		sess.Values["user_email"] = "fred@queen.com"
+		sess.Values["auth_token"] = "123456789"
 		sess.Values["logged"] = true
 
 		// Set some invalid value so we can be sure that it's

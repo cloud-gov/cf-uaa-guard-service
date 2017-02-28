@@ -21,7 +21,7 @@ Before getting started you will need:
 
 Uncomment and fill in the environment variables required as the sample in `broker-manifest.yml.sample` and copy the manifest to `broker-manifest.yml`.
 
-Run `cf push -f broker-manifest.yml` to deploy the `uaa-guard-proxy` app.
+Run `cf push -f broker-manifest.yml` to deploy the `uaa-guard-broker` app.
 
 Uncomment and fill in the environment variables required as the sample in `proxy-manifest.yml.sample` and copy the manifest to `proxy-manifest.yml`.
 
@@ -36,13 +36,6 @@ cf create-service-broker \
     $GUARD_BROKER_PASSWORD \
     https://uaa-guard-broker.my-paas.com \
     --space-scoped
-```
-
-Once you've created the service broker, you must `enable-service-access` in
-order to see it in the `marketplace`.
-
-```sh
-cf enable-service-access uaa-auth
 ```
 
 You should now be able to see the service in the marketplace if you run `cf marketplace`
