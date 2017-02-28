@@ -19,8 +19,8 @@ func rootHandler(res http.ResponseWriter, req *http.Request) {
 		http.Redirect(res, req, "/auth", http.StatusTemporaryRedirect)
 		return
 	}
-
-	newProxy(s.Values["user_email"].(string)).ServeHTTP(res, req)
+	authToken := s.Values["auth_token"].(string)
+	newProxy(s.Values["user_email"].(string), &authToken).ServeHTTP(res, req)
 }
 
 // Handle auth redirect
@@ -45,14 +45,19 @@ func callbackHandler(res http.ResponseWriter, req *http.Request) {
 	}
 
 	s, err := gothic.Store.Get(req, "uaa-proxy-session")
+	if err != nil {
+		fmt.Fprintln(res, err)
+		return
+	}
 	s.Values["user_email"] = user.Email
+	s.Values["auth_token"] = user.AccessToken
 	s.Values["logged"] = true
 	gothic.Store.Save(req, res, s)
 
 	http.Redirect(res, req, "/", http.StatusTemporaryRedirect)
 }
 
-func newProxy(remote_user string) http.Handler {
+func newProxy(remote_user string, auth_token *string) http.Handler {
 	proxy := &httputil.ReverseProxy{
 		Director: func(req *http.Request) {
 			forwardedURL := req.Header.Get(CF_FORWARDED_URL)
@@ -63,7 +68,7 @@ func newProxy(remote_user string) http.Handler {
 			req.URL = url
 			req.Host = url.Host
 			req.Header.Set("X-Auth-User", remote_user)
-
+			req.Header.Set("X-Auth-Token", *auth_token)
 			fmt.Println(req.Header)
 		},
 	}
