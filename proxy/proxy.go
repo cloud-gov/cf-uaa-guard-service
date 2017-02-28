@@ -29,6 +29,7 @@ type Config struct {
 	ClientKey          string `envconfig:"client_key" required:"true"`
 	ClientSecret       string `envconfig:"client_secret" required:"true"`
 	Port               string `envconfig:"port" default:"3000"`
+	RequireSsl         bool   `envconfig:"require_ssl" default:"true"`
 }
 type VcapApplication struct {
 	Uris []string `json:"application_uris"`
@@ -45,7 +46,7 @@ func main() {
 	gothic.GetProviderName = func(*http.Request) (string, error) {
 		return "cloudfoundry", nil
 	}
-	callbackUrl, err := CallbackUrl()
+	callbackUrl, err := CallbackUrl(c.RequireSsl)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -66,21 +67,16 @@ func main() {
 		fmt.Println(err)
 	}
 }
-func CallbackUrl() (string, error) {
+func CallbackUrl(requireSsl bool) (string, error) {
 	var vcapApp VcapApplication
 	err := json.Unmarshal([]byte(c.VcapAppRaw), &vcapApp)
 	if err != nil {
 		return "", err
 	}
-	// we try first ssl to see if it can be used
 	uri := vcapApp.Uris[0]
-	fmt.Println(vcapApp)
-	client := DefaultHttpClient()
-	resp, err := client.Get("https://" + uri)
-	if err == nil && resp.StatusCode == http.StatusTemporaryRedirect {
+	if requireSsl {
 		return "https://" + uri + CALLBACK_ROUTE, nil
 	}
-	// if not work we defaulting on http
 	return "http://" + uri + CALLBACK_ROUTE, nil
 }
 func DefaultHttpClient() *http.Client {
