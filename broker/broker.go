@@ -22,7 +22,7 @@ func (guardBroker *GuardBroker) Services(context.Context) []brokerapi.Service {
 		brokerapi.Service{
 			ID:            "7a3691df-4bba-4468-9cca-85f281143d3f",
 			Name:          "uaa-auth",
-			Description:   "Protect applications with cloud foundry authentication in the routing path",
+			Description:   "[Experimental] Protect applications with Cloud Foundry authentication in the routing path",
 			Bindable:      true,
 			Tags:          []string{"route-service", "uaa-auth"},
 			PlanUpdatable: false,
@@ -31,7 +31,7 @@ func (guardBroker *GuardBroker) Services(context.Context) []brokerapi.Service {
 				brokerapi.ServicePlan{
 					ID:          "f72ca726-fa42-4583-8874-615808fbd6a7",
 					Name:        "uaa-auth",
-					Description: "Just add to a route and it will request cloud foundry authentication before proceeding.",
+					Description: "[Experimental] Add to a route and it will request Cloud Foundry authentication before proceeding.",
 				},
 			},
 		},
