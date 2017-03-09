@@ -2,6 +2,8 @@
 
 (Based on https://github.com/benlaplanche/cf-basic-auth-route-service)
 
+**The UAA Auth Route Service is currently experimental, and it should not be integrated with production services yet.**
+
 Using the new route services functionality available in Cloud Foundry, you can now bind applications to routing services.
 Traffic sent to your application is routed through the bound routing service before continuing onto your service.
 
